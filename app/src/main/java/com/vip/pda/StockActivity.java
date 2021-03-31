@@ -94,8 +94,6 @@ public class StockActivity extends AppCompatActivity {
         });
     }
 
-    boolean first = true;
-
     @OnClick({R.id.mock, R.id.add, R.id.commit})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -103,13 +101,11 @@ public class StockActivity extends AppCompatActivity {
                 Random random = new Random();
                 String[] c = {"111122223333", "222233331111", "333311112222", "333322221111", "444422221111", "555522221111"};
                 String[] s = {"EAN-13/8 UPC-A/E8", "ITF 14 EAN/UCC 12", "SDF-13/8 UPC-A/", "34-/;EAN/UCC 12", "UY/?34-/;EAN/UCC 12", "OPD;/PDA-/;EAN/UCC 12"};
-                String barcode = first ? c[random.nextInt(5)] : s[random.nextInt(5)];
-                first = false;
                 if (TextUtils.isEmpty(tvDh.getText().toString())) {
-                    tvDh.setText(barcode);
+                    tvDh.setText(c[random.nextInt(5)]);
                 } else {
-                    list.add(barcode);
-                    adapter.insert(barcode);
+                    list.add(s[random.nextInt(5)]);
+                    adapter.insert(s[random.nextInt(5)]);
                 }
                 break;
             case R.id.add:
