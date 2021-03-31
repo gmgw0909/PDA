@@ -1,7 +1,9 @@
 package com.vip.pda;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -13,11 +15,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.vip.pda.adapter.ViewHolder;
-import com.vip.pda.adapter.interfaces.OnItemChildClickListener;
+import com.vip.pda.file.SPUtils;
+import com.vip.pda.file.SharePopup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import butterknife.BindView;
@@ -31,54 +34,46 @@ public class StockActivity extends AppCompatActivity {
     TextView mock;
     @BindView(R.id.et_barcode)
     EditText etBarcode;
+    @BindView(R.id.tv_dh)
+    TextView tvDh;
     @BindView(R.id.rv)
     RecyclerView rv;
     StockAdapter adapter;
     List<String> list = new ArrayList<>();
-    String titleText;
+    String titleText, userKey;
+    SharePopup popup;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock);
         ButterKnife.bind(this);
+        popup = new SharePopup(this);
         titleText = getIntent().getStringExtra("title");
+        userKey = SPUtils.getInstance().getString("User");
         title.setText(titleText);
-        if ("入库作业".equals(titleText)) {
-            mock.setVisibility(View.VISIBLE);
-            list.addAll(SPUtils.getInstance().getList("in_list"));
-        } else if ("出库作业".equals(titleText)) {
-            mock.setVisibility(View.VISIBLE);
-            list.addAll(SPUtils.getInstance().getList("out_list"));
-        } else if ("入库删除".equals(titleText)) {
-            list.addAll(SPUtils.getInstance().getList("in_list"));
-        } else if ("出库删除".equals(titleText)) {
-            list.addAll(SPUtils.getInstance().getList("out_list"));
-        } else {
-            list.addAll(SPUtils.getInstance().getList("in_list"));
-            list.addAll(SPUtils.getInstance().getList("out_list"));
-        }
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new StockAdapter(this, titleText.contains("删除"));
         adapter.setOnItemChildClickListener(R.id.delete, (viewHolder, data, position) -> {
             list.remove(data);
-            if ("入库删除".equals(titleText)) {
-                if (list.size() == 0) {
-                    SPUtils.getInstance().remove("in_list");
-                } else {
-                    SPUtils.getInstance().put("in_list", list);
-                }
-            } else if ("出库删除".equals(titleText)) {
-                if (list.size() == 0) {
-                    SPUtils.getInstance().remove("out_list");
-                } else {
-                    SPUtils.getInstance().put("out_list", list);
-                }
-            }
             adapter.remove(position);
         });
         rv.setAdapter(adapter);
-        adapter.setNewData(list);
+        Map<String, ?> map = SPUtils.getInstance(userKey).getAll();
+        List<String> keys = new ArrayList<>(map.keySet());
+        List<String> files = new ArrayList<>();
+        for (int i = 0; i < keys.size(); i++) {
+            if (keys.get(i).contains(titleText)) {
+                files.add(keys.get(i).split("\\|")[1]);
+            }
+        }
+        popup.setData(files);
+        popup.setOnItemClick((viewHolder, data, position) -> {
+            StockBean bean = (StockBean) SPUtils.getInstance(userKey).getObject(titleText + "|" + data);
+            tvDh.setText(bean.getDh());
+            adapter.setNewData(list = bean.getList());
+            popup.dismiss();
+        });
         etBarcode.setOnKeyListener((view, keyCode, keyEvent) -> {
             Log.e("msg", "keyCode:" + keyCode + ",   keyEvent.getAction:" + keyEvent.getAction());
             if (keyCode == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
@@ -88,23 +83,48 @@ public class StockActivity extends AppCompatActivity {
                     return true;
                 }
                 //在这里实现自己的逻辑代码
-                adapter.insert(barcode);
+                if (TextUtils.isEmpty(tvDh.getText().toString())) {
+                    tvDh.setText(barcode);
+                } else {
+                    list.add(barcode);
+                    adapter.insert(barcode);
+                }
             }
             return false;
         });
     }
 
-    @OnClick(R.id.mock)
-    public void onViewClicked() {
-        Random random = new Random();
-        String[] s = {"111122223333", "222233331111", "333311112222", "333322221111", "444422221111", "555522221111"};
-        String data = s[random.nextInt(5)];
-        list.add(data);
-        if ("入库作业".equals(titleText)) {
-            SPUtils.getInstance().put("in_list", list);
-        } else if ("出库作业".equals(titleText)) {
-            SPUtils.getInstance().put("out_list", list);
+    boolean first = true;
+
+    @OnClick({R.id.mock, R.id.add, R.id.commit})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.mock:
+                Random random = new Random();
+                String[] c = {"111122223333", "222233331111", "333311112222", "333322221111", "444422221111", "555522221111"};
+                String[] s = {"EAN-13/8 UPC-A/E8", "ITF 14 EAN/UCC 12", "SDF-13/8 UPC-A/", "34-/;EAN/UCC 12", "UY/?34-/;EAN/UCC 12", "OPD;/PDA-/;EAN/UCC 12"};
+                String barcode = first ? c[random.nextInt(5)] : s[random.nextInt(5)];
+                first = false;
+                if (TextUtils.isEmpty(tvDh.getText().toString())) {
+                    tvDh.setText(barcode);
+                } else {
+                    list.add(barcode);
+                    adapter.insert(barcode);
+                }
+                break;
+            case R.id.add:
+                popup.showAtLocation(title, Gravity.BOTTOM, 0, 0);
+                break;
+            case R.id.commit:
+                if (!TextUtils.isEmpty(tvDh.getText().toString()) && list.size() > 0) {
+                    StockBean bean = new StockBean();
+                    bean.setDh(tvDh.getText().toString());
+                    bean.setList(list);
+                    SPUtils.getInstance(userKey).putObject(titleText + "|" + tvDh.getText().toString(), bean);
+                } else {
+                    Toast.makeText(this, "请先扫描", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
-        adapter.insert(data);
     }
 }

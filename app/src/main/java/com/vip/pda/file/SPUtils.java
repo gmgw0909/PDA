@@ -1,14 +1,20 @@
-package com.vip.pda;
+package com.vip.pda.file;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.vip.pda.App;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -237,6 +243,46 @@ public class SPUtils {
         list = gson.fromJson(strJson, new TypeToken<List<String>>() {
         }.getType());
         return list;
+    }
+
+    /**
+     * SP中存储对象
+     *
+     * @param key 键
+     * @param obj 对象(需要实现Serializable接口)
+     */
+    public void putObject(String key, Object obj) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(obj);
+            String objBase64 = new String(Base64.encode(baos.toByteArray(), Base64.DEFAULT));
+            sp.edit().putString(key, objBase64).apply();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * SP中获取对象
+     *
+     * @param key 键
+     * @return 对象
+     */
+    public Object getObject(String key) {
+        try {
+            String objBase64 = sp.getString(key, null);
+            if (TextUtils.isEmpty(objBase64)) {
+                return null;
+            }
+            byte[] base64 = Base64.decode(objBase64, Base64.DEFAULT);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(base64);
+            ObjectInputStream bis = new ObjectInputStream(byteArrayInputStream);
+            return bis.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
