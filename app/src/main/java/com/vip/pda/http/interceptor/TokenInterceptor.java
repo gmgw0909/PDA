@@ -2,8 +2,7 @@ package com.vip.pda.http.interceptor;
 
 import android.text.TextUtils;
 
-import com.pnlyy.pnlclass.ai_practice.utils.SPKey;
-import com.pnlyy.pnlclass.ai_practice.utils.SPManager;
+import com.vip.pda.file.SPUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -31,9 +30,9 @@ public class TokenInterceptor implements Interceptor {
             }
         }
         //处理Token
-        String token = SPManager.getInstance().getString(SPKey.TOKEN);
+        String token = SPUtils.getInstance().getString("Token");
         if (!TextUtils.isEmpty(token)) {
-            builder.addHeader("Jwt-Token", token).build();
+            builder.addHeader("token", token).build();
         }
 
 //        builder.addHeader("memory", BatteryUtils.getAppMemory() + "MB");//内存使用

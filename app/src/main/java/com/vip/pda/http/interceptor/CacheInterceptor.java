@@ -2,7 +2,8 @@ package com.vip.pda.http.interceptor;
 
 import android.content.Context;
 
-import com.pnlyy.pnlclass.ai_practice.utils.NetworkUtils;
+
+import com.vip.pda.NetworkUtils;
 
 import java.io.IOException;
 

@@ -17,8 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.vip.pda.file.SPUtils;
 import com.vip.pda.file.SharePopup;
+import com.vip.pda.http.ApiDisposableObserver;
+import com.vip.pda.http.BaseResponse;
+import com.vip.pda.http.RetrofitClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -26,6 +30,8 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class StockActivity extends AppCompatActivity {
     @BindView(R.id.title)
@@ -122,5 +128,18 @@ public class StockActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    private void scanIn() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("elsAccount", "307000");
+        RetrofitClient.getApiService().saveStockDetailList(map).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ApiDisposableObserver<BaseResponse>() {
+                    @Override
+                    public void onResult(BaseResponse response) {
+
+                    }
+                });
     }
 }

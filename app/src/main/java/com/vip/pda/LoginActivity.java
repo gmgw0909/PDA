@@ -10,10 +10,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.vip.pda.file.SPUtils;
+import com.vip.pda.http.ApiDisposableObserver;
+import com.vip.pda.http.BaseResponse;
+import com.vip.pda.http.RetrofitClient;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.et1)
@@ -45,6 +53,20 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "请选择离线登录", Toast.LENGTH_SHORT).show();
             return;
         }
+        //{"elsAccount":"307000","elsSubAccount":"1001","elsSubAccountPassword":"202cb962ac59075b964b07152d234b70"}
+        Map<String, Object> map = new HashMap<>();
+        map.put("elsAccount", "307000");
+        map.put("elsSubAccount", "1001");
+        map.put("elsSubAccountPassword", "202cb962ac59075b964b07152d234b70");
+        RetrofitClient.getApiService().login(map).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ApiDisposableObserver<BaseResponse>() {
+                    @Override
+                    public void onResult(BaseResponse response) {
+
+                    }
+                });
+
         SPUtils.getInstance().put("User", user);
         Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
         finish();
