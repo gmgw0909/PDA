@@ -119,6 +119,7 @@ public class StockActivity extends AppCompatActivity {
                 break;
             case R.id.commit:
                 if (!TextUtils.isEmpty(tvDh.getText().toString()) && list.size() > 0) {
+                    scanIn();
                     StockBean bean = new StockBean();
                     bean.setDh(tvDh.getText().toString());
                     bean.setList(list);
@@ -131,9 +132,12 @@ public class StockActivity extends AppCompatActivity {
     }
 
     private void scanIn() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("elsAccount", "307000");
-        RetrofitClient.getApiService().saveStockDetailList(map).subscribeOn(Schedulers.io())
+        List<String> list = new ArrayList<>();
+        list.add("(01)90.GN.2001B.5033.C000003;(03)1;(07)OA01000398;(05)21040900002");
+        list.add("(01)90.GN.2001B.9107.C000002;(03)1;(07)OA01000398;(05)21040900003");
+        list.add("(01)90.GN.2001B.1762.C000003;(03)1;(07)OA01000398;(05)21040900004");
+        list.add("(01)90.GN.2001B.9007.C000001;(03)1;(07)OA01000398;(05)21040900005");
+        RetrofitClient.getApiService().saveStockDetailList(list).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ApiDisposableObserver<BaseResponse>() {
                     @Override

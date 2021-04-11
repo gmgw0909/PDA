@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.vip.pda.bean.LoginInfo;
 import com.vip.pda.file.SPUtils;
 import com.vip.pda.http.ApiDisposableObserver;
 import com.vip.pda.http.BaseResponse;
@@ -55,20 +56,20 @@ public class LoginActivity extends AppCompatActivity {
         }
         //{"elsAccount":"307000","elsSubAccount":"1001","elsSubAccountPassword":"202cb962ac59075b964b07152d234b70"}
         Map<String, Object> map = new HashMap<>();
-        map.put("elsAccount", "307000");
+        map.put("elsAccount", "430000");
         map.put("elsSubAccount", "1001");
         map.put("elsSubAccountPassword", "202cb962ac59075b964b07152d234b70");
         RetrofitClient.getApiService().login(map).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ApiDisposableObserver<BaseResponse>() {
+                .subscribe(new ApiDisposableObserver<BaseResponse<LoginInfo>>() {
                     @Override
-                    public void onResult(BaseResponse response) {
-
+                    public void onResult(BaseResponse<LoginInfo> response) {
+                        SPUtils.getInstance().put("User", user);
+                        SPUtils.getInstance().put("Token", response.getResult().getToken());
+                        ToastUtils.showShort("登录成功");
+                        RetrofitClient.reCreate();
+                        finish();
                     }
                 });
-
-        SPUtils.getInstance().put("User", user);
-        Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
-        finish();
     }
 }

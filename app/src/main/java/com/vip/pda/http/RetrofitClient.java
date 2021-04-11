@@ -1,6 +1,7 @@
 package com.vip.pda.http;
 
 import com.vip.pda.App;
+import com.vip.pda.file.SPUtils;
 import com.vip.pda.http.cookie.CookieJarImpl;
 import com.vip.pda.http.cookie.store.PersistentCookieStore;
 import com.vip.pda.http.interceptor.CacheInterceptor;
@@ -58,7 +59,7 @@ public class RetrofitClient {
                         .log(Platform.INFO) // 打印类型
                         .request("OkHttp") // request的Tag
                         .response("OkHttp")// Response的Tag
-                        .addHeader("log-header", "I am the log request header.")
+                        .addHeader("token", SPUtils.getInstance().getString("Token"))
                         .build()
                 )
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)

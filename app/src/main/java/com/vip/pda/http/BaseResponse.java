@@ -5,7 +5,7 @@ package com.vip.pda.http;
  */
 public class BaseResponse<T> {
     private int code;
-    private String msg;
+    private String message;
     private T data;
 
     public int getCode() {
@@ -29,10 +29,10 @@ public class BaseResponse<T> {
     }
 
     public String getMessage() {
-        return msg;
+        return message;
     }
 
     public void setMessage(String message) {
-        this.msg = message;
+        this.message = message;
     }
 }

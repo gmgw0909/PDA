@@ -60,6 +60,7 @@ public abstract class ApiDisposableObserver<T> extends DisposableObserver<T> {
 
                 break;
             default:
+                ToastUtils.showShort(baseResponse.getMessage());
                 break;
         }
     }

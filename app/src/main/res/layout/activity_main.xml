@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#007979"
     android:orientation="vertical">
 
     <LinearLayout
@@ -15,25 +16,33 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#D9006C"
             android:gravity="center"
             android:text="入库作业"
             android:textColor="#fff"
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#fff" />
+
         <TextView
             android:id="@+id/out_work"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#AE00AE"
             android:gravity="center"
             android:text="出库作业"
             android:textColor="#fff"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#fff" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -46,25 +55,33 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#6F00D2"
             android:gravity="center"
             android:text="登录"
             android:textColor="#fff"
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#fff" />
+
         <TextView
             android:id="@+id/all"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#007979"
             android:gravity="center"
             android:text="库存盘点"
             android:textColor="#fff"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#fff" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -77,19 +94,22 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#548C00"
             android:gravity="center"
             android:text="入库删除"
             android:textColor="#fff"
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#fff" />
+
         <TextView
             android:id="@+id/out_delete"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#737300"
             android:gravity="center"
             android:text="出库删除"
             android:textColor="#fff"
