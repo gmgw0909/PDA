@@ -161,7 +161,7 @@ public class StockActivity extends AppCompatActivity {
                 popup.showAtLocation(title, Gravity.BOTTOM, 0, 0);
                 break;
             case R.id.commit:
-                if (!TextUtils.isEmpty(tvDh.getText().toString()) && list.size() > 0) {
+                if (list.size() > 0) {
                     scanIn(list);
                 } else {
                     ToastUtils.showShort("请先扫描");
