@@ -25,10 +25,10 @@
 
             <TextView
                 android:id="@+id/mock"
-                android:layout_width="50dp"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="mock" />
+                android:text="相机扫码" />
 
             <TextView
                 android:id="@+id/add"
