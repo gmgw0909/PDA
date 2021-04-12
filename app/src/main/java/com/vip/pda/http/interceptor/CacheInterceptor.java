@@ -3,7 +3,7 @@ package com.vip.pda.http.interceptor;
 import android.content.Context;
 
 
-import com.vip.pda.NetworkUtils;
+import com.vip.pda.utils.NetworkUtils;
 
 import java.io.IOException;
 

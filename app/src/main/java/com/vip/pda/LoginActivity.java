@@ -14,7 +14,10 @@ import com.vip.pda.file.SPUtils;
 import com.vip.pda.http.ApiDisposableObserver;
 import com.vip.pda.http.BaseResponse;
 import com.vip.pda.http.RetrofitClient;
+import com.vip.pda.utils.Md5Utils;
+import com.vip.pda.utils.ToastUtils;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,25 +54,29 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         if (!check.isChecked()) {
-            Toast.makeText(this, "请选择离线登录", Toast.LENGTH_SHORT).show();
-            return;
+            //{"elsAccount":"307000","elsSubAccount":"1001","elsSubAccountPassword":"202cb962ac59075b964b07152d234b70"}
+            Map<String, Object> map = new HashMap<>();
+            map.put("elsAccount", user);
+            map.put("elsSubAccount", zi);
+            try {
+                map.put("elsSubAccountPassword", Md5Utils.md5(pass));
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+            RetrofitClient.getApiService().login(map).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new ApiDisposableObserver<BaseResponse<LoginInfo>>() {
+                        @Override
+                        public void onResult(BaseResponse<LoginInfo> response) {
+                            SPUtils.getInstance().put("User", user);
+                            SPUtils.getInstance().put("Token", response.getResult().getToken());
+                            ToastUtils.showShort("登录成功");
+                            RetrofitClient.reCreate();
+                            finish();
+                        }
+                    });
+        } else {
+            ToastUtils.showShort("离线登录成功");
         }
-        //{"elsAccount":"307000","elsSubAccount":"1001","elsSubAccountPassword":"202cb962ac59075b964b07152d234b70"}
-        Map<String, Object> map = new HashMap<>();
-        map.put("elsAccount", "430000");
-        map.put("elsSubAccount", "1001");
-        map.put("elsSubAccountPassword", "202cb962ac59075b964b07152d234b70");
-        RetrofitClient.getApiService().login(map).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ApiDisposableObserver<BaseResponse<LoginInfo>>() {
-                    @Override
-                    public void onResult(BaseResponse<LoginInfo> response) {
-                        SPUtils.getInstance().put("User", user);
-                        SPUtils.getInstance().put("Token", response.getResult().getToken());
-                        ToastUtils.showShort("登录成功");
-                        RetrofitClient.reCreate();
-                        finish();
-                    }
-                });
     }
 }

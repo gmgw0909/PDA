@@ -1,24 +1,14 @@
-package com.vip.pda;
+package com.vip.pda.utils;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.telephony.ServiceState;
-import android.telephony.SubscriptionManager;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Log;
-
-import java.lang.reflect.Method;
-
-import static android.os.Build.VERSION_CODES.Q;
-import static android.telephony.TelephonyManager.NETWORK_TYPE_NR;
 
 public class NetworkUtils {
 

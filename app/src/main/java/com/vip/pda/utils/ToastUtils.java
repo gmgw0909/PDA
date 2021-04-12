@@ -1,4 +1,4 @@
-package com.vip.pda;
+package com.vip.pda.utils;
 
 import android.content.Context;
 import android.os.Handler;
@@ -16,6 +16,8 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+
+import com.vip.pda.App;
 
 import java.lang.ref.WeakReference;
 

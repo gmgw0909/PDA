@@ -1,4 +1,4 @@
-package com.vip.pda;
+package com.vip.pda.utils;
 
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
