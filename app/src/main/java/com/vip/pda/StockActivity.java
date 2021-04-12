@@ -73,7 +73,7 @@ public class StockActivity extends AppCompatActivity {
         userKey = SPUtils.getInstance().getString("User");
         title.setText(titleText);
         rv.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new StockAdapter(this, titleText.contains("删除"));
+        adapter = new StockAdapter(this, true);
         adapter.setOnItemChildClickListener(R.id.delete, (viewHolder, data, position) -> {
             list.remove(data);
             adapter.remove(position);
@@ -104,10 +104,20 @@ public class StockActivity extends AppCompatActivity {
                 }
                 //在这里实现自己的逻辑代码
                 if (titleText.contains("出库") && TextUtils.isEmpty(tvDh.getText().toString())) {
-                    tvDh.setText(barcode);
+                    if (barcode.startsWith("DO") || barcode.startsWith("BDO")) {
+                        tvDh.setText(barcode);
+                    }
                 } else {
-                    list.add(barcode);
-                    adapter.insert(barcode);
+                    if (!TextUtils.isEmpty(barcode) && barcode.startsWith("(")) {
+                        if (!list.contains(barcode)) {
+                            list.add(barcode);
+                            adapter.insert(barcode);
+                        } else {
+                            ToastUtils.showShort("此条码已录入");
+                        }
+                    } else {
+                        ToastUtils.showShort("请扫入正确的条码");
+                    }
                 }
             }
             return false;
@@ -196,11 +206,22 @@ public class StockActivity extends AppCompatActivity {
             switch (requestCode) {
                 case REQUEST_CODE_SCAN:
                     String result = CameraScan.parseScanResult(data);
+                    if (TextUtils.isEmpty(result)) return;
                     if (titleText.contains("出库") && TextUtils.isEmpty(tvDh.getText().toString())) {
-                        tvDh.setText(result);
+                        if (result.startsWith("DO") || result.startsWith("BDO")) {
+                            tvDh.setText(result);
+                        }
                     } else {
-                        list.add(result);
-                        adapter.insert(result);
+                        if (result.startsWith("(")) {
+                            if (!list.contains(result)) {
+                                list.add(result);
+                                adapter.insert(result);
+                            } else {
+                                ToastUtils.showShort("此条码已录入");
+                            }
+                        } else {
+                            ToastUtils.showShort("请扫入正确的条码");
+                        }
                     }
                     break;
             }

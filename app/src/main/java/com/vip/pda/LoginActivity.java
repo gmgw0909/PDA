@@ -1,5 +1,6 @@
 package com.vip.pda;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.CheckBox;
@@ -72,11 +73,14 @@ public class LoginActivity extends AppCompatActivity {
                             SPUtils.getInstance().put("Token", response.getResult().getToken());
                             ToastUtils.showShort("登录成功");
                             RetrofitClient.reCreate();
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             finish();
                         }
                     });
         } else {
             ToastUtils.showShort("离线登录成功");
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
         }
     }
 }
