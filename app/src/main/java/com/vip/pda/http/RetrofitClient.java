@@ -71,7 +71,7 @@ public class RetrofitClient {
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .baseUrl("http://cs.51qqt.com/ELSServer_GUJIA/rest/")
+                .baseUrl("https://cs.51qqt.com/ELSServer_GUJIA/rest/")
                 .build();
 
     }

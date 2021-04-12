@@ -22,7 +22,6 @@ import com.vip.pda.http.BaseResponse;
 import com.vip.pda.http.RetrofitClient;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -106,7 +105,12 @@ public class StockActivity extends AppCompatActivity {
             case R.id.mock:
                 Random random = new Random();
                 String[] c = {"111122223333", "222233331111", "333311112222", "333322221111", "444422221111", "555522221111"};
-                String[] s = {"EAN-13/8 UPC-A/E8", "ITF 14 EAN/UCC 12", "SDF-13/8 UPC-A/", "34-/;EAN/UCC 12", "UY/?34-/;EAN/UCC 12", "OPD;/PDA-/;EAN/UCC 12"};
+                String[] s = {"(01)90.GN.2001B.5033.C000003;(03)1;(07)OA01000398;(05)21040900002",
+                        "(01)90.GN.2001B.9107.C000002;(03)1;(07)OA01000398;(05)21040900003",
+                        "(01)90.GN.2001B.1762.C000003;(03)1;(07)OA01000398;(05)21040900004",
+                        "(01)90.GN.2001B.9007.C000001;(03)1;(07)OA01000398;(05)21040900005",
+                        "(01)90.GN.2001B.5033.C000003;(03)1;(07)OA01000398;(05)21040900006",
+                        "(01)90.GN.2001B.9007.C000001;(03)1;(07)OA01000398;(05)21040900007"};
                 if (TextUtils.isEmpty(tvDh.getText().toString())) {
                     tvDh.setText(c[random.nextInt(5)]);
                 } else {
@@ -119,31 +123,40 @@ public class StockActivity extends AppCompatActivity {
                 break;
             case R.id.commit:
                 if (!TextUtils.isEmpty(tvDh.getText().toString()) && list.size() > 0) {
-                    scanIn();
-                    StockBean bean = new StockBean();
-                    bean.setDh(tvDh.getText().toString());
-                    bean.setList(list);
-                    SPUtils.getInstance(userKey).putObject(titleText + "|" + tvDh.getText().toString(), bean);
+                    scanIn(list);
                 } else {
-                    Toast.makeText(this, "请先扫描", Toast.LENGTH_SHORT).show();
+                    ToastUtils.showShort("请先扫描");
                 }
                 break;
         }
     }
 
-    private void scanIn() {
-        List<String> list = new ArrayList<>();
-        list.add("(01)90.GN.2001B.5033.C000003;(03)1;(07)OA01000398;(05)21040900002");
-        list.add("(01)90.GN.2001B.9107.C000002;(03)1;(07)OA01000398;(05)21040900003");
-        list.add("(01)90.GN.2001B.1762.C000003;(03)1;(07)OA01000398;(05)21040900004");
-        list.add("(01)90.GN.2001B.9007.C000001;(03)1;(07)OA01000398;(05)21040900005");
+    private void scanIn(List<String> list) {
         RetrofitClient.getApiService().saveStockDetailList(list).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ApiDisposableObserver<BaseResponse>() {
                     @Override
                     public void onResult(BaseResponse response) {
+                        if (!response.isSuccess()) {
+                            commitFailed();
+                        }
+                        finish();
+                    }
 
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        commitFailed();
+                        finish();
                     }
                 });
+    }
+
+    private void commitFailed() {
+        ToastUtils.showShort("提交失败,已存入离线文件: " + tvDh.getText().toString());
+        StockBean bean = new StockBean();
+        bean.setDh(tvDh.getText().toString());
+        bean.setList(list);
+        SPUtils.getInstance(userKey).putObject(titleText + "|" + tvDh.getText().toString(), bean);
     }
 }
