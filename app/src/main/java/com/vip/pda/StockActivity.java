@@ -97,27 +97,28 @@ public class StockActivity extends AppCompatActivity {
         etBarcode.setOnKeyListener((view, keyCode, keyEvent) -> {
             Log.e("msg", "keyCode:" + keyCode + ",   keyEvent.getAction:" + keyEvent.getAction());
             if (keyCode == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                String barcode = etBarcode.getText().toString().replaceAll("\n", "");
-                if ("".equals(barcode)) {
-                    Toast.makeText(StockActivity.this, "扫码为空", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                //在这里实现自己的逻辑代码
-                if (titleText.contains("出库") && TextUtils.isEmpty(tvDh.getText().toString())) {
-                    if (barcode.startsWith("DO") || barcode.startsWith("BDO")) {
-                        tvDh.setText(barcode);
-                    }
-                } else {
-                    if (!TextUtils.isEmpty(barcode) && barcode.startsWith("(")) {
-                        if (!list.contains(barcode)) {
-                            list.add(barcode);
-                            adapter.insert(barcode);
-                        } else {
-                            ToastUtils.showShort("此条码已录入");
+                String barcode = etBarcode.getText().toString().replaceAll("\n", "").trim();
+                if (!TextUtils.isEmpty(barcode)) {
+                    //在这里实现自己的逻辑代码
+                    if (titleText.contains("出库") && TextUtils.isEmpty(tvDh.getText().toString())) {
+                        if (barcode.startsWith("DO") || barcode.startsWith("BDO")) {
+                            tvDh.setText(barcode);
                         }
                     } else {
-                        ToastUtils.showShort("请扫入正确的条码");
+                        if (barcode.startsWith("(")) {
+                            if (!list.contains(barcode)) {
+                                list.add(barcode);
+                                adapter.insert(barcode);
+                                if (list.size() > 3) rv.smoothScrollToPosition(list.size() - 1);
+                            } else {
+                                ToastUtils.showShort("此条码已录入");
+                            }
+                        } else {
+                            ToastUtils.showShort("请扫入正确的条码");
+                        }
                     }
+                } else {
+                    ToastUtils.showShort("请扫入正确的条码");
                 }
             }
             return false;
@@ -149,12 +150,9 @@ public class StockActivity extends AppCompatActivity {
 //                        "(01)90.GN.2001B.9007.C000001;(03)1;(07)OA01000398;(05)21040900005",
 //                        "(01)90.GN.2001B.5033.C000003;(03)1;(07)OA01000398;(05)21040900006",
 //                        "(01)90.GN.2001B.9007.C000001;(03)1;(07)OA01000398;(05)21040900007"};
-//                if (titleText.contains("出库") && TextUtils.isEmpty(tvDh.getText().toString())) {
-//                    tvDh.setText(c[random.nextInt(5)]);
-//                } else {
-//                    list.add(s[random.nextInt(5)]);
-//                    adapter.insert(s[random.nextInt(5)]);
-//                }
+//                String result = s[random.nextInt(5)];
+//                list.add(result);
+//                adapter.insert(result);
                 checkCameraPermissions();
                 break;
             case R.id.add:
@@ -206,22 +204,26 @@ public class StockActivity extends AppCompatActivity {
             switch (requestCode) {
                 case REQUEST_CODE_SCAN:
                     String result = CameraScan.parseScanResult(data);
-                    if (TextUtils.isEmpty(result)) return;
-                    if (titleText.contains("出库") && TextUtils.isEmpty(tvDh.getText().toString())) {
-                        if (result.startsWith("DO") || result.startsWith("BDO")) {
-                            tvDh.setText(result);
-                        }
-                    } else {
-                        if (result.startsWith("(")) {
-                            if (!list.contains(result)) {
-                                list.add(result);
-                                adapter.insert(result);
-                            } else {
-                                ToastUtils.showShort("此条码已录入");
+                    if (!TextUtils.isEmpty(result)) {
+                        if (titleText.contains("出库") && TextUtils.isEmpty(tvDh.getText().toString())) {
+                            if (result.startsWith("DO") || result.startsWith("BDO")) {
+                                tvDh.setText(result);
                             }
                         } else {
-                            ToastUtils.showShort("请扫入正确的条码");
+                            if (result.startsWith("(")) {
+                                if (!list.contains(result)) {
+                                    list.add(result);
+                                    adapter.insert(result);
+                                    if (list.size() > 3) rv.smoothScrollToPosition(list.size() - 1);
+                                } else {
+                                    ToastUtils.showShort("此条码已录入");
+                                }
+                            } else {
+                                ToastUtils.showShort("请扫入正确的条码");
+                            }
                         }
+                    } else {
+                        ToastUtils.showShort("请扫入正确的条码");
                     }
                     break;
             }
