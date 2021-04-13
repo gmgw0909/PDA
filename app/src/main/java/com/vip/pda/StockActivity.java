@@ -99,6 +99,7 @@ public class StockActivity extends AppCompatActivity {
             if (keyCode == KeyEvent.KEYCODE_ENTER && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
                 String barcode = etBarcode.getText().toString().replaceAll("\n", "").trim();
                 if (!TextUtils.isEmpty(barcode)) {
+                    etBarcode.setText("");
                     //在这里实现自己的逻辑代码
                     if (titleText.contains("出库") && TextUtils.isEmpty(tvDh.getText().toString())) {
                         if (barcode.startsWith("DO") || barcode.startsWith("BDO")) {
