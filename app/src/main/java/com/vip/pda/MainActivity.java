@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
                         .putExtra("title", "出库作业"));
                 break;
             case R.id.login:
-                startActivity(new Intent(this, LoginActivity.class));
+                finish();
                 break;
             case R.id.all:
                 if (!isLogin()) return;
