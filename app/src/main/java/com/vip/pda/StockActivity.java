@@ -35,6 +35,7 @@ import com.vip.pda.utils.CommonUtils;
 import com.vip.pda.utils.ToastUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -170,25 +171,44 @@ public class StockActivity extends AppCompatActivity {
     }
 
     private void scanIn(List<String> list) {
-        RetrofitClient.getApiService().saveStockDetailList(list).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ApiDisposableObserver<BaseResponse>() {
-                    @Override
-                    public void onResult(BaseResponse response) {
-                        if (!response.isSuccess()) {
-                            commitFailed();
-                        }
-                        finish();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
-                        commitFailed();
-                        finish();
-                    }
-                });
+        if (titleText.equals("入库作业")) {
+            RetrofitClient.getApiService().saveStockDetailList(list).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(apiDisposableObserver);
+        } else if (titleText.equals("出库作业")) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("fbk1", tvDh.getText().toString());
+            map.put("itemList", list);
+            RetrofitClient.getApiService().outStockDetailList(map).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(apiDisposableObserver);
+        } else if (titleText.equals("入库删除")) {
+            RetrofitClient.getApiService().deleteInStockDetailList(list).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(apiDisposableObserver);
+        } else if (titleText.equals("出库删除")) {
+            RetrofitClient.getApiService().deleteOutStockDetailList(list).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(apiDisposableObserver);
+        }
     }
+
+    ApiDisposableObserver apiDisposableObserver = new ApiDisposableObserver<BaseResponse>() {
+        @Override
+        public void onResult(BaseResponse response) {
+            if (!response.isSuccess()) {
+                commitFailed();
+            }
+            finish();
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            super.onError(e);
+            commitFailed();
+            finish();
+        }
+    };
 
     private void commitFailed() {
         ToastUtils.showShort("提交失败,已存入离线文件: " + tvDh.getText().toString());
