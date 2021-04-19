@@ -44,25 +44,26 @@ public abstract class ApiDisposableObserver<T> extends DisposableObserver<T> {
 
     @Override
     public void onNext(T t) {
-        BaseResponse baseResponse = (BaseResponse) t;
-        switch (baseResponse.getCode()) {
-            //请求成功, 正确的操作方式
-            case CodeRule.CODE_200:
-                onResult(t);
-                break;
-//            //请求失败
-//            case CodeRule.CODE_500:
+        onResult(t);
+//        BaseResponse baseResponse = (BaseResponse) t;
+//        switch (baseResponse.getCode()) {
+//            //请求成功, 正确的操作方式
+//            case CodeRule.CODE_200:
+//                onResult(t);
+//                break;
+////            //请求失败
+////            case CodeRule.CODE_500:
+////                ToastUtils.showShort(baseResponse.getMessage());
+////                break;
+//            //无效的Token，提示跳入登录页
+//            case CodeRule.CODE_401:
+//            case CodeRule.CODE_1002:
+//
+//                break;
+//            default:
 //                ToastUtils.showShort(baseResponse.getMessage());
 //                break;
-            //无效的Token，提示跳入登录页
-            case CodeRule.CODE_401:
-            case CodeRule.CODE_1002:
-
-                break;
-            default:
-                ToastUtils.showShort(baseResponse.getMessage());
-                break;
-        }
+//        }
     }
 
     public static final class CodeRule {

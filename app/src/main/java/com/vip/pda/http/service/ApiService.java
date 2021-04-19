@@ -26,4 +26,7 @@ public interface ApiService {
 
     @POST("order/MaterialStockListService/deleteOutStockDetailList")
     Observable<BaseResponse> deleteOutStockDetailList(@Body List<String> list);
+
+    @POST("order/MaterialStockListService/saveInventoryHead")
+    Observable<BaseResponse> saveInventoryHead(@Body Map<String, Object> map);
 }

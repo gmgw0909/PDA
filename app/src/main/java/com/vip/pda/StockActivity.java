@@ -25,6 +25,7 @@ import com.king.zxing.CaptureActivity;
 import com.king.zxing.DecodeConfig;
 import com.king.zxing.DefaultCameraScan;
 import com.king.zxing.analyze.MultiFormatAnalyzer;
+import com.vip.pda.bean.BarcodeInfo;
 import com.vip.pda.bean.StockBean;
 import com.vip.pda.file.SPUtils;
 import com.vip.pda.file.SharePopup;
@@ -105,6 +106,8 @@ public class StockActivity extends AppCompatActivity {
                     if (titleText.contains("出库") && TextUtils.isEmpty(tvDh.getText().toString())) {
                         if (barcode.startsWith("DO") || barcode.startsWith("BDO")) {
                             tvDh.setText(barcode);
+                        } else {
+                            ToastUtils.showShort("请扫入正确的单号");
                         }
                     } else {
                         if (barcode.startsWith("(")) {
@@ -176,9 +179,13 @@ public class StockActivity extends AppCompatActivity {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(apiDisposableObserver);
         } else if (titleText.equals("出库作业")) {
+            List<BarcodeInfo> list_ = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                list_.add(new BarcodeInfo(list.get(i)));
+            }
             Map<String, Object> map = new HashMap<>();
             map.put("fbk1", tvDh.getText().toString());
-            map.put("itemList", list);
+            map.put("itemList", list_);
             RetrofitClient.getApiService().outStockDetailList(map).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(apiDisposableObserver);
@@ -188,6 +195,17 @@ public class StockActivity extends AppCompatActivity {
                     .subscribe(apiDisposableObserver);
         } else if (titleText.equals("出库删除")) {
             RetrofitClient.getApiService().deleteOutStockDetailList(list).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(apiDisposableObserver);
+        } else if (titleText.equals("库存盘点")) {
+            List<BarcodeInfo> list_ = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                list_.add(new BarcodeInfo(list.get(i)));
+            }
+            Map<String, Object> map = new HashMap<>();
+            map.put("receiptNumber", tvDh.getText().toString());
+            map.put("itemList", list_);
+            RetrofitClient.getApiService().saveInventoryHead(map).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(apiDisposableObserver);
         }
@@ -229,6 +247,8 @@ public class StockActivity extends AppCompatActivity {
                         if (titleText.contains("出库") && TextUtils.isEmpty(tvDh.getText().toString())) {
                             if (result.startsWith("DO") || result.startsWith("BDO")) {
                                 tvDh.setText(result);
+                            } else {
+                                ToastUtils.showShort("请扫入正确的单号");
                             }
                         } else {
                             if (result.startsWith("(")) {
