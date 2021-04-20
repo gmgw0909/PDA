@@ -109,6 +109,12 @@ public class StockActivity extends AppCompatActivity {
                         } else {
                             ToastUtils.showShort("请扫入正确的单号");
                         }
+                    } else if (titleText.contains("盘点") && TextUtils.isEmpty(tvDh.getText().toString())) {
+                        if (barcode.startsWith("DO") || barcode.startsWith("BDO")) {
+                            tvDh.setText(barcode);
+                        } else {
+                            ToastUtils.showShort("请扫入正确的单号");
+                        }
                     } else {
                         if (barcode.startsWith("(")) {
                             if (!list.contains(barcode)) {
@@ -216,6 +222,8 @@ public class StockActivity extends AppCompatActivity {
         public void onResult(BaseResponse response) {
             if (!response.isSuccess()) {
                 commitFailed(response);
+            } else {
+                ToastUtils.showShort("提交成功");
             }
             finish();
         }
@@ -230,7 +238,7 @@ public class StockActivity extends AppCompatActivity {
 
     private void commitFailed(BaseResponse response) {
         String re = response != null && !TextUtils.isEmpty(response.getMessage()) ? ("\n错误原因：" + response.getMessage()) : "";
-        ToastUtils.showShort("提交失败,已存入离线文件: " + tvDh.getText().toString() + re);
+        ToastUtils.showLong("提交失败,已存入离线文件: " + tvDh.getText().toString() + re);
         StockBean bean = new StockBean();
         bean.setDh(tvDh.getText().toString());
         bean.setList(list);
@@ -246,6 +254,12 @@ public class StockActivity extends AppCompatActivity {
                     String result = CameraScan.parseScanResult(data);
                     if (!TextUtils.isEmpty(result)) {
                         if (titleText.contains("出库") && TextUtils.isEmpty(tvDh.getText().toString())) {
+                            if (result.startsWith("DO") || result.startsWith("BDO")) {
+                                tvDh.setText(result);
+                            } else {
+                                ToastUtils.showShort("请扫入正确的单号");
+                            }
+                        } else if (titleText.contains("盘点") && TextUtils.isEmpty(tvDh.getText().toString())) {
                             if (result.startsWith("DO") || result.startsWith("BDO")) {
                                 tvDh.setText(result);
                             } else {
