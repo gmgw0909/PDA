@@ -215,7 +215,7 @@ public class StockActivity extends AppCompatActivity {
         @Override
         public void onResult(BaseResponse response) {
             if (!response.isSuccess()) {
-                commitFailed();
+                commitFailed(response);
             }
             finish();
         }
@@ -223,13 +223,14 @@ public class StockActivity extends AppCompatActivity {
         @Override
         public void onError(Throwable e) {
             super.onError(e);
-            commitFailed();
+            commitFailed(null);
             finish();
         }
     };
 
-    private void commitFailed() {
-        ToastUtils.showShort("提交失败,已存入离线文件: " + tvDh.getText().toString());
+    private void commitFailed(BaseResponse response) {
+        String re = response != null && !TextUtils.isEmpty(response.getMessage()) ? ("\n错误原因：" + response.getMessage()) : "";
+        ToastUtils.showShort("提交失败,已存入离线文件: " + tvDh.getText().toString() + re);
         StockBean bean = new StockBean();
         bean.setDh(tvDh.getText().toString());
         bean.setList(list);
