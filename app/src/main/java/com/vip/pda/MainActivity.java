@@ -26,12 +26,10 @@ public class MainActivity extends AppCompatActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.in_work:
-                if (!isLogin()) return;
                 startActivity(new Intent(this, StockActivity.class)
                         .putExtra("title", "入库作业"));
                 break;
             case R.id.out_work:
-                if (!isLogin()) return;
                 startActivity(new Intent(this, StockActivity.class)
                         .putExtra("title", "出库作业"));
                 break;
@@ -39,28 +37,17 @@ public class MainActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.all:
-                if (!isLogin()) return;
                 startActivity(new Intent(this, StockActivity.class)
                         .putExtra("title", "库存盘点"));
                 break;
             case R.id.in_delete:
-                if (!isLogin()) return;
                 startActivity(new Intent(this, StockActivity.class)
                         .putExtra("title", "入库删除"));
                 break;
             case R.id.out_delete:
-                if (!isLogin()) return;
                 startActivity(new Intent(this, StockActivity.class)
                         .putExtra("title", "出库删除"));
                 break;
         }
-    }
-
-    private boolean isLogin() {
-        if (TextUtils.isEmpty(SPUtils.getInstance().getString("User"))) {
-            Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
     }
 }

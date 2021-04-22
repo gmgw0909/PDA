@@ -68,6 +68,7 @@ public class StockActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_SCAN = 0X01;
     public static final int REQUEST_CODE_PHOTO = 0X02;
     ApiDisposableObserver apiDisposableObserver;
+    boolean isScan = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,15 +86,6 @@ public class StockActivity extends AppCompatActivity {
             adapter.remove(position);
         });
         rv.setAdapter(adapter);
-        Map<String, ?> map = SPUtils.getInstance(userKey).getAll();
-        List<String> keys = new ArrayList<>(map.keySet());
-        List<String> files = new ArrayList<>();
-        for (int i = 0; i < keys.size(); i++) {
-            if (keys.get(i).contains(titleText)) {
-                files.add(keys.get(i).split("\\|")[1]);
-            }
-        }
-        popup.setData(files);
         popup.setOnItemClick((viewHolder, data, position) -> {
             StockBean bean = (StockBean) SPUtils.getInstance(userKey).getObject(titleText + "|" + data);
             tvDh.setText(bean.getDh());
@@ -141,6 +133,15 @@ public class StockActivity extends AppCompatActivity {
                 checkCameraPermissions();
                 break;
             case R.id.add:
+                Map<String, ?> map = SPUtils.getInstance(userKey).getAll();
+                List<String> keys = new ArrayList<>(map.keySet());
+                List<String> files = new ArrayList<>();
+                for (int i = 0; i < keys.size(); i++) {
+                    if (keys.get(i).contains(titleText)) {
+                        files.add(keys.get(i).split("\\|")[1]);
+                    }
+                }
+                popup.setData(files);
                 popup.showAtLocation(title, Gravity.BOTTOM, 0, 0);
                 break;
             case R.id.commit:
@@ -154,6 +155,15 @@ public class StockActivity extends AppCompatActivity {
     }
 
     private void scanIn(List<String> list) {
+        if (!CommonUtils.isLogin()) {
+            if (isScan) {
+                isScan = false;
+                commitFailed(null);
+            } else {
+                ToastUtils.showShort("已提交离线文件");
+            }
+            return;
+        }
         apiDisposableObserver = new ApiDisposableObserver<BaseResponse>() {
             @Override
             public void onResult(BaseResponse response) {
@@ -233,6 +243,7 @@ public class StockActivity extends AppCompatActivity {
 
     private void dealScanData(String result) {
         if (!TextUtils.isEmpty(result)) {
+            isScan = true;
             etBarcode.setText("");
             if (titleText.contains("出库") && TextUtils.isEmpty(tvDh.getText().toString())) {
                 if (result.startsWith("DO") || result.startsWith("BDO")) {

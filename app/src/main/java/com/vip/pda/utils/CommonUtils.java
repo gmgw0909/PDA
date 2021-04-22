@@ -19,13 +19,17 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
+
+import com.vip.pda.file.SPUtils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Locale;
 
 public class CommonUtils {
@@ -164,6 +168,7 @@ public class CommonUtils {
 
     /**
      * 是否调试进程
+     *
      * @return
      */
     public static boolean isUnderTraced() {
@@ -189,5 +194,25 @@ public class CommonUtils {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static <T extends Comparable<T>> boolean compare(List<T> a, List<T> b) {
+        if (a == null || b == null) {
+            return false;
+        }
+        if (a.size() != b.size())
+            return false;
+        for (int i = 0; i < a.size(); i++) {
+            if (!a.get(i).equals(b.get(i)))
+                return false;
+        }
+        return true;
+    }
+
+    public static boolean isLogin() {
+        if (TextUtils.isEmpty(SPUtils.getInstance().getString("User"))) {
+            return false;
+        }
+        return true;
     }
 }
