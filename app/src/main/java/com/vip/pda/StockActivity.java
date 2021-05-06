@@ -69,6 +69,7 @@ public class StockActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_PHOTO = 0X02;
     ApiDisposableObserver apiDisposableObserver;
     boolean isScan = true;
+    PromptDialog dialog, backDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,6 +100,13 @@ public class StockActivity extends AppCompatActivity {
                 dealScanData(barcode);
             }
             return false;
+        });
+        dialog = new PromptDialog(this);
+        dialog.setTitle("提交作业");
+        dialog.setMessage("确定提交作业吗?");
+        dialog.setOnOkClickListener(v -> {
+            scanIn(list);
+            dialog.dismiss();
         });
     }
 
@@ -146,7 +154,7 @@ public class StockActivity extends AppCompatActivity {
                 break;
             case R.id.commit:
                 if (list.size() > 0) {
-                    scanIn(list);
+                    dialog.show();
                 } else {
                     ToastUtils.showShort("请先扫描");
                 }
@@ -284,5 +292,32 @@ public class StockActivity extends AppCompatActivity {
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Ringtone r = RingtoneManager.getRingtone(this, notification);
         r.play();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (list.size() > 0) {
+            backDialog = new PromptDialog(this);
+            backDialog.setTitle("温馨提示");
+            backDialog.setMessage("确定退出吗?");
+            backDialog.setOnOkClickListener(v -> {
+                backDialog.dismiss();
+                finish();
+            });
+            backDialog.show();
+        } else {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+        if (backDialog != null && backDialog.isShowing()) {
+            backDialog.dismiss();
+        }
     }
 }
