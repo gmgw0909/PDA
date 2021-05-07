@@ -69,7 +69,7 @@ public class StockActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_PHOTO = 0X02;
     ApiDisposableObserver apiDisposableObserver;
     boolean isScan = true;
-    PromptDialog dialog, backDialog;
+    PromptDialog dialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -295,29 +295,10 @@ public class StockActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        if (list.size() > 0) {
-            backDialog = new PromptDialog(this);
-            backDialog.setTitle("温馨提示");
-            backDialog.setMessage("确定退出吗?");
-            backDialog.setOnOkClickListener(v -> {
-                backDialog.dismiss();
-                finish();
-            });
-            backDialog.show();
-        } else {
-            finish();
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
-        }
-        if (backDialog != null && backDialog.isShowing()) {
-            backDialog.dismiss();
         }
     }
 }

@@ -14,12 +14,20 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
+    PromptDialog backDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        backDialog = new PromptDialog(this);
+        backDialog.setTitle("温馨提示");
+        backDialog.setMessage("确定退出吗?");
+        backDialog.setOnOkClickListener(v -> {
+            backDialog.dismiss();
+            finish();
+        });
     }
 
     @OnClick({R.id.in_work, R.id.out_work, R.id.login, R.id.all, R.id.in_delete, R.id.out_delete})
@@ -34,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                         .putExtra("title", "出库作业"));
                 break;
             case R.id.login:
-                finish();
+                backDialog.show();
                 break;
             case R.id.all:
                 startActivity(new Intent(this, StockActivity.class)
@@ -48,6 +56,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, StockActivity.class)
                         .putExtra("title", "出库删除"));
                 break;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (backDialog != null && backDialog.isShowing()) {
+            backDialog.dismiss();
         }
     }
 }
