@@ -69,7 +69,7 @@ public class StockActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_PHOTO = 0X02;
     ApiDisposableObserver apiDisposableObserver;
     boolean isScan = true;
-    PromptDialog dialog;
+    PromptDialog dialog, failDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -107,6 +107,12 @@ public class StockActivity extends AppCompatActivity {
         dialog.setOnOkClickListener(v -> {
             scanIn(list);
             dialog.dismiss();
+        });
+        failDialog = new PromptDialog(this);
+        failDialog.setTitle("提交失败");
+        failDialog.single();
+        failDialog.setOnOkClickListener(v -> {
+            failDialog.dismiss();
         });
     }
 
@@ -229,7 +235,8 @@ public class StockActivity extends AppCompatActivity {
     private void commitFailed(BaseResponse response) {
         String key = TextUtils.isEmpty(tvDh.getText().toString()) ? String.valueOf(System.currentTimeMillis()) : tvDh.getText().toString();
         String re = response != null && !TextUtils.isEmpty(response.getMessage()) ? ("\n错误原因：" + response.getMessage()) : "";
-        ToastUtils.showLong("提交失败,已存入离线文件: " + key + re);
+        failDialog.setMessage("提交失败,已存入离线文件: " + key + re);
+        failDialog.show();
         StockBean bean = new StockBean();
         bean.setDh(TextUtils.isEmpty(tvDh.getText().toString()) ? "" : tvDh.getText().toString());
         bean.setList(list);
@@ -299,6 +306,9 @@ public class StockActivity extends AppCompatActivity {
         super.onDestroy();
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
+        }
+        if (failDialog != null && failDialog.isShowing()) {
+            failDialog.dismiss();
         }
     }
 }
