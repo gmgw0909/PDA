@@ -3,6 +3,7 @@ package com.vip.pda.file;
 import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,6 +44,9 @@ public class SharePopup extends PopupWindow {
         setContentView(contentView);
         ButterKnife.bind(this, contentView);
         rv.setLayoutManager(new LinearLayoutManager(context));
+//        DividerItemDecoration decoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+//        decoration.setDrawable(ContextCompat.getDrawable(context, R.drawable.ic_launcher_background));
+//        rv.addItemDecoration(decoration);
         rv.setAdapter(adapter = new FileAdapter(context));
         setWidth(WindowManager.LayoutParams.MATCH_PARENT);
         setHeight(WindowManager.LayoutParams.WRAP_CONTENT);

@@ -69,12 +69,16 @@ public class LoginActivity extends AppCompatActivity {
                     .subscribe(new ApiDisposableObserver<BaseResponse<LoginInfo>>() {
                         @Override
                         public void onResult(BaseResponse<LoginInfo> response) {
-                            SPUtils.getInstance().put("User", user);
-                            SPUtils.getInstance().put("Token", response.getResult().getToken());
-                            ToastUtils.showShort("登录成功");
-                            RetrofitClient.reCreate();
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                            finish();
+                            if (response.isSuccess()) {
+                                SPUtils.getInstance().put("User", user);
+                                SPUtils.getInstance().put("Token", response.getResult().getToken());
+                                ToastUtils.showShort("登录成功");
+                                RetrofitClient.reCreate();
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                finish();
+                            } else {
+                                ToastUtils.showShort(response.getMessage());
+                            }
                         }
                     });
         } else {

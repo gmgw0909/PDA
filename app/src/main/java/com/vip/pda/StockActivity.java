@@ -38,6 +38,7 @@ import com.vip.pda.http.RetrofitClient;
 import com.vip.pda.utils.CommonUtils;
 import com.vip.pda.utils.ToastUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -233,7 +234,9 @@ public class StockActivity extends AppCompatActivity {
     }
 
     private void commitFailed(BaseResponse response) {
-        String key = TextUtils.isEmpty(tvDh.getText().toString()) ? String.valueOf(System.currentTimeMillis()) : tvDh.getText().toString();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateStr = format.format(System.currentTimeMillis());
+        String key = TextUtils.isEmpty(tvDh.getText().toString()) ? dateStr : dateStr + "\n" + tvDh.getText().toString();
         String re = response != null && !TextUtils.isEmpty(response.getMessage()) ? ("\n错误原因：" + response.getMessage()) : "";
         failDialog.setMessage("提交失败,已存入离线文件: " + key + re);
         failDialog.show();
