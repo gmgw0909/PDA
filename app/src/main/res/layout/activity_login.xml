@@ -20,7 +20,6 @@
         android:layout_height="50dp"
         android:layout_marginTop="50dp"
         android:hint="账号"
-        android:text="430000"
         android:textColor="#333" />
 
     <EditText
@@ -29,7 +28,6 @@
         android:layout_height="50dp"
         android:layout_marginTop="15dp"
         android:hint="子账号"
-        android:text="1001"
         android:textColor="#333" />
 
     <EditText
@@ -39,7 +37,6 @@
         android:layout_marginTop="15dp"
         android:hint="密码"
         android:inputType="textPassword"
-        android:text="123"
         android:textColor="#333" />
 
     <CheckBox

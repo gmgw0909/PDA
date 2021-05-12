@@ -43,6 +43,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+//        et1.setText("430000");
+//        et2.setText("1001");
+//        et3.setText("123");
     }
 
     @OnClick(R.id.login)

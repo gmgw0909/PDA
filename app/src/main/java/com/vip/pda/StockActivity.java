@@ -1,6 +1,7 @@
 package com.vip.pda;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -38,8 +39,10 @@ import com.vip.pda.http.RetrofitClient;
 import com.vip.pda.utils.CommonUtils;
 import com.vip.pda.utils.ToastUtils;
 
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,7 +159,7 @@ public class StockActivity extends AppCompatActivity {
                         files.add(keys.get(i).split("\\|")[1]);
                     }
                 }
-                popup.setData(files);
+                popup.setData(invertOrderList(files));
                 popup.showAtLocation(title, Gravity.BOTTOM, 0, 0);
                 break;
             case R.id.commit:
@@ -302,6 +305,30 @@ public class StockActivity extends AppCompatActivity {
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Ringtone r = RingtoneManager.getRingtone(this, notification);
         r.play();
+    }
+
+    //将List按照时间倒序排列
+    @SuppressLint("SimpleDateFormat")
+    private List<String> invertOrderList(List<String> L) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date d1;
+        Date d2;
+        String temp_r;
+        //做一个冒泡排序，大的在数组的前列
+        for (int i = 0; i < L.size() - 1; i++) {
+            for (int j = i + 1; j < L.size(); j++) {
+                ParsePosition pos1 = new ParsePosition(0);
+                ParsePosition pos2 = new ParsePosition(0);
+                d1 = sdf.parse(L.get(i), pos1);
+                d2 = sdf.parse(L.get(j), pos2);
+                if (d1.before(d2)) {//如果队前日期靠前，调换顺序
+                    temp_r = L.get(i);
+                    L.set(i, L.get(j));
+                    L.set(j, temp_r);
+                }
+            }
+        }
+        return L;
     }
 
     @Override
